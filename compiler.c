@@ -37,7 +37,7 @@ int ex(nodeType * p) {
                     } else {
                         printf("\tjz\tL%03d\n", lbl1=lbl++);
                         ex(p->opr.op[1]);
-                        printf("L03d:\n", lbl1);
+                        printf("L%03d:\n", lbl1);
                     }
                     break;
                 case PRINT:
