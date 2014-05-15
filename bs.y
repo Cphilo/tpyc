@@ -19,9 +19,9 @@
     nodeType *nPtr;
 };
 
-%token <iValue> INTEGER
+%token <iValue> INTEGER FLOAT
 %token <sIndex> VARIABLE
-%token WHILE IF ELSE PRINT
+%token WHILE IF ELSE PRINT LINE
 %nonassoc IFX
 %nonassoc ELSE
 
@@ -43,22 +43,23 @@ function:
     ;
 
 stmt: 
-    expr { $$ = $1; }
-    | PRINT expr { $$ = opr(PRINT, 1, $2); }
-    | VARIABLE '=' expr { $$ = opr('=', 2, id($1), $3); }
-    | WHILE expr ':' stmt { $$ = opr(WHILE, 2, $2, $4); }
-    | IF expr ':' stmt %prec IFX { $$ = opr(IF, 2, $2, $4); }
-    | IF expr ':' stmt ELSE ':' stmt { $$ = opr(IF, 3, $2, $4, $7); }
+    expr LINE { $$ = $1; }
+    | PRINT expr LINE { $$ = opr(PRINT, 1, $2); }
+    | VARIABLE '=' expr LINE { $$ = opr('=', 2, id($1), $3); }
+    | WHILE expr ':' LINE stmt { $$ = opr(WHILE, 2, $2, $5); }
+    | IF expr ':' LINE stmt %prec IFX { $$ = opr(IF, 2, $2, $5); }
+    | IF expr ':' LINE stmt ELSE ':' LINE stmt { $$ = opr(IF, 3, $2, $5, $9); }
     | '{' stmt_list '}' { $$ = $2; }
     ;
 
 stmt_list:
     stmt { $$ = $1; }
-    | stmt_list stmt { $$ = opr(';', 2, $1, $2); };
+    | stmt_list stmt { $$ = opr(';', 2, $1, $2); }
     ;
 
 expr:
     INTEGER { $$ = con($1); }
+    | FLOAT { $$ = con($1); }
     | VARIABLE { $$ = id($1); }
     | '-' expr %prec UMINUS { $$ = opr(UMINUS, 1, $2); }
     | expr '+' expr { $$ = opr('+', 2, $1, $3); }
